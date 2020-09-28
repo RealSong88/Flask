@@ -1,6 +1,7 @@
 # ---------------------------------------- [edit] ---------------------------------------- #
-from flask import Blueprint, url_for
+from flask import Blueprint, url_for, render_template
 from werkzeug.utils import redirect
+from pybo.models import Question
 
 # ---------------------------------------- [edit] ---------------------------------------- #
 
@@ -16,5 +17,9 @@ def hello_pybo():
 def index():
     return redirect(url_for('question._list'))
 
+@bp.route('/detail/<int:question_id>/')
+def detail(question_id):
+    # ---------------------------------------- [edit] ---------------------------------------- #
+    question = Question.query.get_or_404(question_id)
 
-# ---------------------------------------- [edit] ---------------------------------------- #
+    return render_template('question/question_detail.html', question=question)
