@@ -11,9 +11,7 @@ bp = Blueprint('answer', __name__, url_prefix='/answer')
 
 
 @bp.route('/create/<int:question_id>', methods=('POST', ))
-# ---------------------------------------- [edit] ---------------------------------------- #
 @login_required
-#-------------------------------------------------------#
 def create(question_id):
     form = AnswerForm()
     question = Question.query.get_or_404(question_id)
@@ -23,13 +21,15 @@ def create(question_id):
                         create_date=datetime.now(), user=g.user)
         question.answer_set.append(answer)
         db.session.commit()
-        return redirect(url_for('question.detail', question_id=question_id))
+# ---------------------------------------- [edit] ---------------------------------------- #
+        return redirect('{}#answer_{}'.format(url_for('question.detail', question_id=question_id), answer.id))
+#-------------------------------------------------------#
 
     return render_template('question/question_detail.html', question=question, form=form)
 
 
-@bp.route('/modify/<int:answer_id>', methods=('GET', 'POST'))
-@login_required
+@ bp.route('/modify/<int:answer_id>', methods=('GET', 'POST'))
+@ login_required
 def modify(answer_id):
     answer = Answer.query.get_or_404(answer_id)
     if g.user != answer.user:
@@ -41,15 +41,16 @@ def modify(answer_id):
             form.populate_obj(answer)
             answer.modify_date = datetime.now()  # 수정일시 저장
             db.session.commit()
-            return redirect(url_for('question.detail', question_id=answer.question.id))
+# ---------------------------------------- [edit] ---------------------------------------- #
+            return redirect('{}#answer_{}'.format(url_for('question.detail', question_id=answer.question.id), answer.id))
+#-------------------------------------------------------#
     else:
         form = AnswerForm(obj=answer)
     return render_template('answer/answer_form.html', answer=answer, form=form)
-# ---------------------------------------- [edit] ---------------------------------------- #
 
 
-@bp.route('/delete/<int:answer_id>')
-@login_required
+@ bp.route('/delete/<int:answer_id>')
+@ login_required
 def delete(answer_id):
     answer = Answer.query.get_or_404(answer_id)
     question_id = answer.question.id

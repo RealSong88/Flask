@@ -1,11 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-# ---------------------------------------- [edit] ---------------------------------------- #
 from sqlalchemy import MetaData
 #-------------------------------------------------------#
 import config
-
+from flaskext.markdown import Markdown
 # ---------------------------------------- [edit] ---------------------------------------- #
 naming_convention = {
     "ix": 'ix_%(column_0_label)s',
@@ -35,17 +34,20 @@ def create_app():
 
     # 블루프린트
 # ---------------------------------------- [edit] ---------------------------------------- #
-    from .views import main_views, question_views, answer_views, auth_views, comment_views
+    from .views import main_views, question_views, answer_views, auth_views, comment_views, vote_views
 # ---------------------------------------- [edit] ---------------------------------------- #
     app.register_blueprint(main_views.bp)
     app.register_blueprint(question_views.bp)
     app.register_blueprint(answer_views.bp)
     app.register_blueprint(auth_views.bp)
-# ---------------------------------------- [edit] ---------------------------------------- #
     app.register_blueprint(comment_views.bp)
-# ---------------------------------------- [edit] ---------------------------------------- #
+    app.register_blueprint(vote_views.bp)
     # 필터
     from .filter import format_datetime
     app.jinja_env.filters['datetime'] = format_datetime
+# ---------------------------------------- [edit] ---------------------------------------- #
+    # markdown
+    Markdown(app, extensions=['nl2br', 'fenced_code'])
+# ---------------------------------------- [edit] ---------------------------------------- #
 
     return app
